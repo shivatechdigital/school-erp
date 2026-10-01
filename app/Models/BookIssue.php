@@ -29,6 +29,14 @@ class BookIssue extends Model
         'issued_by',
     ];
 
+    // Mirrors DB defaults so the observer sees 'issued' as the original status.
+    protected $attributes = [
+        'member_type' => 'student',
+        'status' => 'issued',
+        'fine_status' => 'unpaid',
+        'fine_amount' => 0,
+    ];
+
     protected $casts = [
         'issue_date' => 'date',
         'due_date' => 'date',
