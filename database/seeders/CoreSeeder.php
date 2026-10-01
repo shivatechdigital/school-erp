@@ -2,6 +2,12 @@
 
 namespace Database\Seeders;
 
+use App\Models\AcademicYear;
+use App\Models\Branch;
+use App\Models\Plan;
+use App\Models\School;
+use App\Models\SchoolClass;
+use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
