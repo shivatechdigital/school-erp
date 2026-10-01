@@ -11,14 +11,20 @@ use App\Models\StudentTransport;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class StudentTransportResource extends Resource
 {
     protected static ?string $model = StudentTransport::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Transport';
+
+    protected static ?string $navigationLabel = 'Transport Allocation';
+
+    protected static ?int $navigationSort = 3;
 
     public static function form(Schema $schema): Schema
     {

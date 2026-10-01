@@ -5,11 +5,13 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\StudentResource\Pages;
 use App\Models\AcademicYear;
 use App\Models\Branch;
+use App\Models\Exam;
 use App\Models\School;
 use App\Models\SchoolClass;
 use App\Models\Section;
 use App\Models\Student;
 use BackedEnum;
+use Filament\Actions\Action;
 use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -173,7 +175,29 @@ class StudentResource extends \Filament\Resources\Resource
                 ]),
                 SelectFilter::make('gender')->options(['male' => 'Male', 'female' => 'Female', 'other' => 'Other']),
             ])
-            ->recordActions([ViewAction::make(), EditAction::make()])
+            ->recordActions([
+                ViewAction::make(),
+                EditAction::make(),
+                Action::make('report_card')
+                    ->label('📄 Report Card')
+                    ->icon('heroicon-o-document-text')
+                    ->color('warning')
+                    ->schema([
+                        Select::make('exam_id')
+                            ->label('Select Exam')
+                            ->options(fn (Student $record) => Exam::query()
+                                ->where('school_id', $record->school_id)
+                                ->where('result_published', true)
+                                ->pluck('name', 'id'))
+                            ->required(),
+                    ])
+                    ->action(function (Student $record, array $data) {
+                        return redirect()->route('report.card', [
+                            'student' => $record->id,
+                            'exam' => $data['exam_id'],
+                        ]);
+                    }),
+            ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),

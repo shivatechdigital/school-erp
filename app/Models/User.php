@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
@@ -74,5 +75,15 @@ class User extends Authenticatable implements FilamentUser
     public function guardian()
     {
         return $this->hasOne(Guardian::class);
+    }
+
+    // User has no tenant global scope; restrict to the logged-in user's school/branch.
+    public function scopeSameSchool(Builder $query): Builder
+    {
+        $user = auth()->user();
+
+        return $query->when($user?->user_type !== 'super_admin', fn (Builder $q) => $q
+            ->where('school_id', $user?->school_id)
+            ->when($user?->branch_id, fn (Builder $q, $branchId) => $q->where('branch_id', $branchId)));
     }
 }

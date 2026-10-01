@@ -13,7 +13,17 @@ return new class extends Migration
     {
         Schema::create('fee_heads', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('school_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->string('code')->nullable();
+            $table->enum('type', ['mandatory', 'optional'])->default('mandatory');
+            $table->enum('frequency', [
+                'one_time', 'monthly', 'quarterly', 'half_yearly', 'yearly',
+            ])->default('monthly');
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
+
+            $table->index('school_id');
         });
     }
 

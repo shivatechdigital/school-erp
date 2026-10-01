@@ -13,6 +13,12 @@ return new class extends Migration
     {
         Schema::create('leave_types', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('school_id')->constrained()->cascadeOnDelete();
+            $table->string('name');
+            $table->string('code', 10);
+            $table->integer('max_days')->default(12);
+            $table->boolean('is_paid')->default(true);
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }

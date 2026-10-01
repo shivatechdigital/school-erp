@@ -2,6 +2,12 @@
 
 namespace App\Providers;
 
+use App\Models\BookIssue;
+use App\Models\FeeCollection;
+use App\Models\Mark;
+use App\Observers\BookIssueObserver;
+use App\Observers\FeeCollectionObserver;
+use App\Observers\MarkObserver;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +25,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        FeeCollection::observe(FeeCollectionObserver::class);
+        Mark::observe(MarkObserver::class);
+        BookIssue::observe(BookIssueObserver::class);
     }
 }

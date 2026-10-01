@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Attendances\Pages;
 
 use App\Filament\Resources\Attendances\AttendanceResource;
-use Filament\Actions\CreateAction;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 
 class ListAttendances extends ListRecords
@@ -13,7 +13,10 @@ class ListAttendances extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make(),
+            Action::make('mark_attendance')
+                ->label('Mark Attendance')
+                ->icon('heroicon-o-check-badge')
+                ->url(AttendanceResource::getUrl('bulk')),
         ];
     }
 }

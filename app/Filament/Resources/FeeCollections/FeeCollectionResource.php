@@ -3,22 +3,28 @@
 namespace App\Filament\Resources\FeeCollections;
 
 use App\Filament\Resources\FeeCollections\Pages\CreateFeeCollection;
-use App\Filament\Resources\FeeCollections\Pages\EditFeeCollection;
 use App\Filament\Resources\FeeCollections\Pages\ListFeeCollections;
+use App\Filament\Resources\FeeCollections\Pages\ViewFeeCollection;
 use App\Filament\Resources\FeeCollections\Schemas\FeeCollectionForm;
 use App\Filament\Resources\FeeCollections\Tables\FeeCollectionsTable;
 use App\Models\FeeCollection;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use UnitEnum;
 
 class FeeCollectionResource extends Resource
 {
     protected static ?string $model = FeeCollection::class;
 
-    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-rupee';
+
+    protected static string|UnitEnum|null $navigationGroup = 'Finance';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $navigationLabel = 'Fee Collection';
 
     public static function form(Schema $schema): Schema
     {
@@ -42,7 +48,7 @@ class FeeCollectionResource extends Resource
         return [
             'index' => ListFeeCollections::route('/'),
             'create' => CreateFeeCollection::route('/create'),
-            'edit' => EditFeeCollection::route('/{record}/edit'),
+            'view' => ViewFeeCollection::route('/{record}'),
         ];
     }
 }

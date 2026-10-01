@@ -2,11 +2,17 @@
 
 namespace App\Filament\Resources\Guardians\Tables;
 
+use App\Models\Guardian;
+use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class GuardiansTable
@@ -15,72 +21,90 @@ class GuardiansTable
     {
         return $table
             ->columns([
-                TextColumn::make('school_id')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('user_id')
-                    ->numeric()
-                    ->sortable(),
+                ImageColumn::make('photo')
+                    ->circular(),
+
                 TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->sortable()
+                    ->weight('bold'),
+
                 TextColumn::make('relation')
-                    ->badge(),
-                TextColumn::make('gender')
-                    ->badge(),
-                TextColumn::make('date_of_birth')
-                    ->date()
-                    ->sortable(),
-                TextColumn::make('photo')
-                    ->searchable(),
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'father' => 'info',
+                        'mother' => 'danger',
+                        'guardian' => 'warning',
+                        default => 'gray',
+                    })
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
+
                 TextColumn::make('phone')
-                    ->searchable(),
-                TextColumn::make('alternate_phone')
-                    ->searchable(),
-                TextColumn::make('email')
-                    ->label('Email address')
-                    ->searchable(),
+                    ->searchable()
+                    ->icon('heroicon-o-phone'),
+
                 TextColumn::make('whatsapp')
-                    ->searchable(),
+                    ->icon('heroicon-o-chat-bubble-left')
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('email')
+                    ->searchable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+
                 TextColumn::make('occupation')
-                    ->searchable(),
-                TextColumn::make('company_name')
-                    ->searchable(),
-                TextColumn::make('annual_income')
-                    ->numeric()
-                    ->sortable(),
-                TextColumn::make('city')
-                    ->searchable(),
-                TextColumn::make('state')
-                    ->searchable(),
-                TextColumn::make('pincode')
-                    ->searchable(),
-                TextColumn::make('aadhaar_no')
-                    ->searchable(),
-                TextColumn::make('pan_no')
-                    ->searchable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
+
+                TextColumn::make('students_count')
+                    ->counts('students')
+                    ->label('Children')
+                    ->badge()
+                    ->color('primary'),
+
                 IconColumn::make('is_primary_contact')
-                    ->boolean(),
+                    ->label('Primary')
+                    ->boolean()
+                    ->trueIcon('heroicon-o-star')
+                    ->trueColor('warning'),
+
                 IconColumn::make('is_active')
                     ->boolean(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('relation')
+                    ->options([
+                        'father' => 'Father',
+                        'mother' => 'Mother',
+                        'guardian' => 'Guardian',
+                    ]),
+                TernaryFilter::make('is_primary_contact')
+                    ->label('Primary Contact'),
+                TernaryFilter::make('is_active')
+                    ->label('Active'),
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
+
+                Action::make('call')
+                    ->icon('heroicon-o-phone')
+                    ->color('success')
+                    ->tooltip('Call Now')
+                    ->url(fn (Guardian $record): string => 'tel:'.$record->phone),
+
+                Action::make('whatsapp')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('success')
+                    ->tooltip('WhatsApp')
+                    ->url(fn (Guardian $record): string => 'https://wa.me/91'.ltrim($record->whatsapp ?? $record->phone, '0'))
+                    ->openUrlInNewTab(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                 ]),
-            ]);
+            ])
+            ->defaultSort('name')
+            ->emptyStateHeading('No guardians found')
+            ->emptyStateDescription('Add a guardian and link students to them.');
     }
 }

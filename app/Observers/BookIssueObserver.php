@@ -6,43 +6,26 @@ use App\Models\BookIssue;
 
 class BookIssueObserver
 {
-    /**
-     * Handle the BookIssue "created" event.
-     */
-    public function created(BookIssue $bookIssue): void
+    public function creating(BookIssue $issue): void
     {
-        //
+        if (empty($issue->issued_by) && auth()->check()) {
+            $issue->issued_by = auth()->id();
+        }
     }
 
-    /**
-     * Handle the BookIssue "updated" event.
-     */
-    public function updated(BookIssue $bookIssue): void
+    public function created(BookIssue $issue): void
     {
-        //
+        $book = $issue->book;
+
+        if ($book && $book->available_copies > 0) {
+            $book->decrement('available_copies');
+        }
     }
 
-    /**
-     * Handle the BookIssue "deleted" event.
-     */
-    public function deleted(BookIssue $bookIssue): void
+    public function updated(BookIssue $issue): void
     {
-        //
-    }
-
-    /**
-     * Handle the BookIssue "restored" event.
-     */
-    public function restored(BookIssue $bookIssue): void
-    {
-        //
-    }
-
-    /**
-     * Handle the BookIssue "force deleted" event.
-     */
-    public function forceDeleted(BookIssue $bookIssue): void
-    {
-        //
+        if ($issue->wasChanged('status') && $issue->status === 'returned' && $issue->getOriginal('status') === 'issued') {
+            $issue->book?->increment('available_copies');
+        }
     }
 }
