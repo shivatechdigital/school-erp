@@ -21,7 +21,7 @@ class CoreSeeder extends Seeder
         // 1. Create Super Admin
         $superAdmin = User::create([
             'name' => 'Super Admin',
-            'email' => 'admin@schoolorp.com',
+            'email' => 'admin@schoolerp.com',
             'password' => bcrypt('password'),
             'user_type' => 'super_admin',
             'status' => 'active',
