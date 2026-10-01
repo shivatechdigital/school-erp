@@ -12,6 +12,7 @@ use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
+use App\Filament\Widgets\StatsOverview;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -28,9 +29,20 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
+            ->profile()
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Blue,
+                'danger' => Color::Red,
+                'gray' => Color::Slate,
+                'info' => Color::Blue,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
             ])
+            ->brandName('SchoolERP')
+            ->favicon(asset('favicon.ico'))
+            ->sidebarCollapsibleOnDesktop()
+            ->darkMode()
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
@@ -40,6 +52,7 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 AccountWidget::class,
                 FilamentInfoWidget::class,
+                StatsOverview::class,
             ])
             ->middleware([
                 EncryptCookies::class,

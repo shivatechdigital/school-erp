@@ -4,18 +4,28 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
-#[Fillable(['name', 'email', 'password', 'user_type', 'status'])]
+#[Fillable([
+    'name', 'email', 'password', 'school_id', 'branch_id', 'employee_code', 'phone',
+    'alternate_phone', 'profile_photo', 'gender', 'date_of_birth', 'blood_group', 'address',
+    'city', 'state', 'pincode', 'qualification', 'designation', 'department', 'joining_date',
+    'salary', 'user_type', 'status', 'last_login_at',
+])]
 #[Hidden(['password', 'remember_token'])]
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -27,6 +37,42 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'date_of_birth' => 'date',
+            'joining_date' => 'date',
+            'salary' => 'decimal:2',
+            'last_login_at' => 'datetime',
         ];
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($this->user_type === 'super_admin') {
+            return true;
+        }
+
+        return $this->status === 'active' && in_array($this->user_type, [
+            'school_admin', 'branch_admin', 'teacher', 'accountant', 'librarian',
+            'transport_manager', 'receptionist',
+        ], true);
+    }
+
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    public function branch()
+    {
+        return $this->belongsTo(Branch::class);
+    }
+
+    public function students()
+    {
+        return $this->hasMany(Student::class);
+    }
+
+    public function guardian()
+    {
+        return $this->hasOne(Guardian::class);
     }
 }
