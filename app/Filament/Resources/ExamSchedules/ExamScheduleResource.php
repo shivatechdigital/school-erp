@@ -16,6 +16,8 @@ use UnitEnum;
 
 class ExamScheduleResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = ExamSchedule::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';

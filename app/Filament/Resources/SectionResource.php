@@ -27,6 +27,8 @@ use UnitEnum;
 
 class SectionResource extends \Filament\Resources\Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Section::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';

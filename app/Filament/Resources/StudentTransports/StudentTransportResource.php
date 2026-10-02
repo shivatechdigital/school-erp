@@ -16,6 +16,8 @@ use UnitEnum;
 
 class StudentTransportResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = StudentTransport::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';

@@ -16,6 +16,8 @@ use UnitEnum;
 
 class HostelAllocationResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = HostelAllocation::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-plus';

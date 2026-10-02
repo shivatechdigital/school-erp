@@ -18,6 +18,8 @@ use UnitEnum;
 
 class MarkResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Mark::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-pencil-square';

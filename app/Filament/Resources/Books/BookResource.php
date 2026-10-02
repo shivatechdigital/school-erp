@@ -16,6 +16,8 @@ use UnitEnum;
 
 class BookResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Book::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-bookmark-square';

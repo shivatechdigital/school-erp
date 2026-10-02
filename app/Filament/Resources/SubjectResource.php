@@ -21,6 +21,8 @@ use UnitEnum;
 
 class SubjectResource extends \Filament\Resources\Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Subject::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-book-open';

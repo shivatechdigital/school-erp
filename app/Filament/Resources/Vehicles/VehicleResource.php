@@ -16,6 +16,8 @@ use UnitEnum;
 
 class VehicleResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Vehicle::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-truck';

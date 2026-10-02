@@ -5,7 +5,12 @@ namespace Tests\Feature;
 use App\Filament\Pages\GradingPolicySettings;
 use App\Filament\Pages\TeacherDashboard;
 use App\Filament\Pages\TeacherMarksEntry;
+use App\Filament\AdminDashboard;
+use App\Filament\Resources\AcademicYearResource;
 use App\Filament\Resources\Attendances\AttendanceResource;
+use App\Filament\Resources\Homework\HomeworkResource;
+use App\Filament\Resources\SchoolClassResource;
+use App\Filament\Resources\StudentResource;
 use App\Models\Section;
 use App\Models\StudentAttendance;
 use App\Models\User;
@@ -29,11 +34,17 @@ class TeacherWorkflowAuthorizationTest extends TestCase
         $this->actingAs($teacher);
         $this->assertTrue(TeacherDashboard::canAccess());
         $this->assertTrue(TeacherMarksEntry::canAccess());
+        $this->assertFalse(AdminDashboard::canAccess());
+        $this->assertFalse(AcademicYearResource::canViewAny());
+        $this->assertFalse(SchoolClassResource::canViewAny());
+        $this->assertFalse(StudentResource::canViewAny());
+        $this->assertTrue(HomeworkResource::canViewAny());
         $this->assertFalse(GradingPolicySettings::canAccess());
 
         $this->actingAs($principal);
         $this->assertFalse(TeacherDashboard::canAccess());
         $this->assertFalse(TeacherMarksEntry::canAccess());
+        $this->assertTrue(AdminDashboard::canAccess());
         $this->assertTrue(GradingPolicySettings::canAccess());
     }
 

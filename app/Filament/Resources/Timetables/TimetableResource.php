@@ -16,6 +16,8 @@ use UnitEnum;
 
 class TimetableResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Timetable::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';

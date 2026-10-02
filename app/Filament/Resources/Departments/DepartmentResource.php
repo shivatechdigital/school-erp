@@ -16,6 +16,8 @@ use UnitEnum;
 
 class DepartmentResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Department::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office';

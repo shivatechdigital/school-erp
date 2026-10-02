@@ -16,6 +16,8 @@ use UnitEnum;
 
 class NoticeResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Notice::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-megaphone';

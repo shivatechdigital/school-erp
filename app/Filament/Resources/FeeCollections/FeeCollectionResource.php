@@ -16,6 +16,8 @@ use UnitEnum;
 
 class FeeCollectionResource extends Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = FeeCollection::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-currency-rupee';

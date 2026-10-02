@@ -20,6 +20,8 @@ use UnitEnum;
 
 class AcademicYearResource extends \Filament\Resources\Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = AcademicYear::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-calendar-days';

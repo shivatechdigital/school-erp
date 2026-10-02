@@ -37,6 +37,8 @@ use UnitEnum;
 
 class StudentResource extends \Filament\Resources\Resource
 {
+    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+
     protected static ?string $model = Student::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
