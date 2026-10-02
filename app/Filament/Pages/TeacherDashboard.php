@@ -48,7 +48,7 @@ class TeacherDashboard extends Page
 
     protected static ?string $title = 'Teacher Dashboard';
 
-    protected static string $view = 'filament.pages.teacher-dashboard';
+    protected string $view = 'filament.pages.teacher-dashboard';
 
     public static function canAccess(): bool
     {

@@ -20,7 +20,7 @@ class GradingPolicySettings extends Page
 
     protected static ?string $title = 'Pass / Fail Criteria';
 
-    protected static string $view = 'filament.pages.grading-policy-settings';
+    protected string $view = 'filament.pages.grading-policy-settings';
 
     public static function canAccess(): bool
     {

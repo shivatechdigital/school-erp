@@ -35,7 +35,7 @@ class TeacherMarksEntry extends Page implements HasSchemas
 
     protected static ?string $title = 'Class Marks Entry';
 
-    protected static string $view = 'filament.pages.teacher-marks-entry';
+    protected string $view = 'filament.pages.teacher-marks-entry';
 
     public ?array $data = [];
 

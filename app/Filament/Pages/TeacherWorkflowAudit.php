@@ -20,7 +20,7 @@ class TeacherWorkflowAudit extends Page
 
     protected static ?string $title = 'Teacher Workflow Audit';
 
-    protected static string $view = 'filament.pages.teacher-workflow-audit';
+    protected string $view = 'filament.pages.teacher-workflow-audit';
 
     public static function canAccess(): bool
     {
