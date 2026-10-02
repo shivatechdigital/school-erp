@@ -26,7 +26,7 @@ class TeacherWorkflowAuthorizationTest extends TestCase
 
     protected string $seeder = DatabaseSeeder::class;
 
-    public function test_teacher_dashboard_and_marks_entry_are_teacher_only(): void
+    public function test_teacher_and_admin_dashboard_access_are_separated(): void
     {
         $teacher = User::query()->where('user_type', 'teacher')->firstOrFail();
         $principal = User::query()->where('email', 'principal@demo.com')->firstOrFail();
@@ -34,7 +34,8 @@ class TeacherWorkflowAuthorizationTest extends TestCase
         $this->actingAs($teacher);
         $this->assertTrue(TeacherDashboard::canAccess());
         $this->assertTrue(TeacherMarksEntry::canAccess());
-        $this->assertFalse(AdminDashboard::canAccess());
+        $this->assertTrue(AdminDashboard::canAccess());
+        $this->assertSame([], AdminDashboard::getNavigationItems());
         $this->assertFalse(AcademicYearResource::canViewAny());
         $this->assertFalse(SchoolClassResource::canViewAny());
         $this->assertFalse(StudentResource::canViewAny());
