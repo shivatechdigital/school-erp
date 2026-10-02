@@ -57,6 +57,11 @@ class Homework extends Model
         return $this->belongsTo(Section::class);
     }
 
+    public function sections()
+    {
+        return $this->belongsToMany(Section::class, 'homework_sections')->withTimestamps();
+    }
+
     public function subject(): BelongsTo
     {
         return $this->belongsTo(Subject::class);

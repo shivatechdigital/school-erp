@@ -30,6 +30,9 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->profile()
+            ->homeUrl(fn (): string => auth()->user()?->user_type === 'teacher'
+                ? \App\Filament\Pages\TeacherDashboard::getUrl()
+                : Dashboard::getUrl())
             ->colors([
                 'primary' => Color::Blue,
                 'danger' => Color::Red,

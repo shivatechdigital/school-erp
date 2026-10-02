@@ -56,7 +56,7 @@ class TimetablesTable
 
                 TextColumn::make('teacher.name')
                     ->label('Teacher')
-                    ->default('-')
+                    ->formatStateUsing(fn (Timetable $record): string => ($record->teacher?->name ?? '-').($record->substitute_for_id ? ' (Substitute)' : ''))
                     ->icon('heroicon-m-user'),
 
                 TextColumn::make('room_no')

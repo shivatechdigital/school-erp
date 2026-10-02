@@ -3,8 +3,13 @@
 namespace App\Filament\Resources\Homework\Schemas;
 
 use App\Models\AcademicYear;
+use App\Models\Homework;
+use App\Models\SchoolClass;
+use App\Models\Section as SchoolSection;
+use App\Models\Subject;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -13,7 +18,6 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
-use Illuminate\Database\Eloquent\Builder;
 
 class HomeworkForm
 {
@@ -40,23 +44,48 @@ class HomeworkForm
 
                         Select::make('class_id')
                             ->label('Class')
-                            ->relationship('schoolClass', 'name')
+                            ->options(fn (): array => SchoolClass::query()
+                                ->when(auth()->user()?->user_type === 'teacher', fn ($query) => $query->whereHas(
+                                    'subjects',
+                                    fn ($subjects) => $subjects->where('class_subject.teacher_id', auth()->id())
+                                ))
+                                ->orderBy('sort_order')->pluck('name', 'id')->all())
                             ->live()
-                            ->afterStateUpdated(fn (Set $set) => $set('section_id', null))
+                            ->afterStateUpdated(function (Set $set): void {
+                                $set('section_ids', []);
+                                $set('section_id', null);
+                                $set('subject_id', null);
+                            })
                             ->required(),
 
-                        Select::make('section_id')
-                            ->label('Section')
-                            ->relationship('section', 'name', fn (Builder $query, Get $get) => $query->where('class_id', $get('class_id')))
+                        Select::make('section_ids')
+                            ->label('Sections')
+                            ->options(fn (Get $get): array => SchoolSection::query()
+                                ->where('class_id', $get('class_id'))
+                                ->where('is_active', true)
+                                ->orderBy('name')->pluck('name', 'id')->all())
+                            ->multiple()
+                            ->searchable()
+                            ->default(fn (?Homework $record): array => $record
+                                ? ($record->sections->isNotEmpty() ? $record->sections->modelKeys() : [$record->section_id])
+                                : [])
+                            ->live()
+                            ->afterStateUpdated(fn (Set $set, ?array $state) => $set('section_id', $state[0] ?? null))
                             ->required(),
+
+                        Hidden::make('section_id')->required(),
 
                         Select::make('subject_id')
                             ->label('Subject')
-                            ->relationship('subject', 'name')
+                            ->options(fn (Get $get): array => Subject::query()
+                                ->whereHas('classes', function ($classes) use ($get): void {
+                                    $classes->where('classes.id', $get('class_id'))
+                                        ->when(auth()->user()?->user_type === 'teacher', fn ($query) => $query->where('class_subject.teacher_id', auth()->id()));
+                                })
+                                ->orderBy('name')->pluck('name', 'id')->all())
                             ->searchable()
-                            ->preload()
                             ->required(),
-                    ])->columns(4),
+                    ])->columns(3),
 
                 Section::make('Assignment Details')
                     ->schema([

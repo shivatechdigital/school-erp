@@ -10,6 +10,7 @@ use App\Filament\Resources\Homework\Schemas\HomeworkForm;
 use App\Filament\Resources\Homework\Tables\HomeworkTable;
 use App\Models\Homework;
 use BackedEnum;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
@@ -28,6 +29,14 @@ class HomeworkResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return HomeworkForm::configure($schema);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+
+        return parent::getEloquentQuery()
+            ->when($user?->user_type === 'teacher', fn (Builder $query) => $query->where('teacher_id', $user->id));
     }
 
     public static function table(Table $table): Table

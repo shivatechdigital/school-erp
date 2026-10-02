@@ -49,4 +49,9 @@ class StudentAttendance extends Model
     {
         return $this->belongsTo(User::class, 'marked_by');
     }
+
+    public function audits()
+    {
+        return $this->hasMany(StudentAttendanceAudit::class);
+    }
 }

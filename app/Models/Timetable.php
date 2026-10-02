@@ -21,6 +21,8 @@ class Timetable extends Model
         'section_id',
         'subject_id',
         'teacher_id',
+        'substitute_for_id',
+        'exchange_request_id',
         'day_of_week',
         'period_number',
         'start_time',
@@ -58,6 +60,11 @@ class Timetable extends Model
     public function teacher(): BelongsTo
     {
         return $this->belongsTo(User::class, 'teacher_id');
+    }
+
+    public function substituteFor(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'substitute_for_id');
     }
 
     /**

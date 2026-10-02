@@ -61,6 +61,11 @@ class Mark extends Model
         return $this->belongsTo(User::class, 'entered_by');
     }
 
+    public function audits()
+    {
+        return $this->hasMany(MarkAudit::class);
+    }
+
     public static function gradeFor(float $percentage): string
     {
         return match (true) {
@@ -74,7 +79,7 @@ class Mark extends Model
         };
     }
 
-    public function calculateResult(): void
+    public function calculateResult(?float $subjectPassPercentage = null): void
     {
         $total = (float) ($this->theory_marks ?? 0) + (float) ($this->practical_marks ?? 0);
         $this->total_marks = $total;
@@ -86,7 +91,10 @@ class Mark extends Model
 
         // Manually chosen absent/withheld results must not be overwritten.
         if (! in_array($this->result, ['absent', 'withheld'], true)) {
-            $this->result = $total >= $this->pass_marks ? 'pass' : 'fail';
+            $passed = $subjectPassPercentage === null
+                ? $total >= $this->pass_marks
+                : (float) $this->percentage >= $subjectPassPercentage;
+            $this->result = $passed ? 'pass' : 'fail';
         }
     }
 }

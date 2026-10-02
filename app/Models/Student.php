@@ -39,6 +39,7 @@ class Student extends Model
     public function user() { return $this->belongsTo(User::class); }
     public function guardians() { return $this->belongsToMany(Guardian::class, 'guardian_student')->withPivot('relation', 'is_primary')->withTimestamps(); }
     public function documents() { return $this->hasMany(StudentDocument::class); }
+    public function notes() { return $this->hasMany(StudentNote::class); }
 
     public function getFullNameAttribute(): string
     {
