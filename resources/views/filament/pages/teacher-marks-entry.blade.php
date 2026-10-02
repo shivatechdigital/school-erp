@@ -38,16 +38,19 @@
                                     <td class="px-3 py-2 font-medium">{{ $student['name'] }}</td>
                                     <td class="px-3 py-2 text-gray-500 dark:text-gray-400">{{ $student['section'] }}</td>
                                     <td class="px-3 py-2">
-                                        <input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.theory_marks"
-                                            class="w-24 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                        <x-filament::input.wrapper class="w-24">
+                                            <x-filament::input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.theory_marks" />
+                                        </x-filament::input.wrapper>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.practical_marks"
-                                            class="w-24 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                        <x-filament::input.wrapper class="w-24">
+                                            <x-filament::input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.practical_marks" />
+                                        </x-filament::input.wrapper>
                                     </td>
                                     <td class="px-3 py-2">
-                                        <input type="text" wire:model.blur="studentList.{{ $index }}.remark"
-                                            class="min-w-36 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                        <x-filament::input.wrapper class="min-w-36">
+                                            <x-filament::input type="text" wire:model.blur="studentList.{{ $index }}.remark" />
+                                        </x-filament::input.wrapper>
                                     </td>
                                 </tr>
                             @endforeach

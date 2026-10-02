@@ -2,12 +2,14 @@
 
 namespace App\Providers;
 
+use App\Filament\Auth\RoleAwareLoginResponse;
 use App\Models\BookIssue;
 use App\Models\FeeCollection;
 use App\Models\Mark;
 use App\Observers\BookIssueObserver;
 use App\Observers\FeeCollectionObserver;
 use App\Observers\MarkObserver;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -17,7 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(LoginResponse::class, RoleAwareLoginResponse::class);
     }
 
     /**
