@@ -1,30 +1,54 @@
 <x-filament-panels::page>
     <div class="space-y-6">
-        {{ $this->form }}
+        <x-filament::section>
+            {{ $this->form }}
+        </x-filament::section>
 
         @if (! empty($studentList))
-            <x-filament::section heading="Student marks" icon="heroicon-o-pencil-square">
-                <div class="overflow-x-auto">
+            @php
+                $filledCount = collect($studentList)->filter(fn (array $s): bool => filled($s['theory_marks'] ?? null) || filled($s['practical_marks'] ?? null))->count();
+            @endphp
+
+            <x-filament::section icon="heroicon-o-pencil-square">
+                <x-slot name="heading">
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span>Student marks</span>
+                        <x-filament::badge color="success">{{ $filledCount }} / {{ count($studentList) }} entered</x-filament::badge>
+                    </div>
+                </x-slot>
+
+                <div class="overflow-x-auto rounded-lg border border-gray-200 dark:border-white/10">
                     <table class="w-full text-start text-sm">
                         <thead>
-                            <tr class="border-b text-gray-500">
-                                <th class="py-2 pe-4">Roll</th>
-                                <th class="py-2 pe-4">Student</th>
-                                <th class="py-2 pe-4">Section</th>
-                                <th class="py-2 pe-4">Theory</th>
-                                <th class="py-2 pe-4">Practical</th>
-                                <th class="py-2">Remark</th>
+                            <tr class="bg-gray-50 text-xs uppercase tracking-wide text-gray-500 dark:bg-white/5 dark:text-gray-400">
+                                <th class="px-3 py-2 text-center">Roll</th>
+                                <th class="px-3 py-2">Student</th>
+                                <th class="px-3 py-2">Section</th>
+                                <th class="px-3 py-2">Theory</th>
+                                <th class="px-3 py-2">Practical</th>
+                                <th class="px-3 py-2">Remark</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="divide-y divide-gray-100 dark:divide-white/5">
                             @foreach ($studentList as $index => $student)
-                                <tr class="border-b last:border-0">
-                                    <td class="py-2 pe-4">{{ $student['roll_no'] }}</td>
-                                    <td class="py-2 pe-4 font-medium">{{ $student['name'] }}</td>
-                                    <td class="py-2 pe-4">{{ $student['section'] }}</td>
-                                    <td class="py-2 pe-4"><input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.theory_marks" class="w-24 rounded border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-900"></td>
-                                    <td class="py-2 pe-4"><input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.practical_marks" class="w-24 rounded border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-900"></td>
-                                    <td class="py-2"><input type="text" wire:model.blur="studentList.{{ $index }}.remark" class="min-w-36 rounded border-gray-300 text-sm dark:border-gray-700 dark:bg-gray-900"></td>
+                                <tr class="odd:bg-white even:bg-gray-50/60 dark:odd:bg-transparent dark:even:bg-white/5">
+                                    <td class="px-3 py-2 text-center">
+                                        <x-filament::badge color="gray">{{ $student['roll_no'] }}</x-filament::badge>
+                                    </td>
+                                    <td class="px-3 py-2 font-medium">{{ $student['name'] }}</td>
+                                    <td class="px-3 py-2 text-gray-500 dark:text-gray-400">{{ $student['section'] }}</td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.theory_marks"
+                                            class="w-24 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="number" min="0" step="0.01" wire:model.blur="studentList.{{ $index }}.practical_marks"
+                                            class="w-24 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                    </td>
+                                    <td class="px-3 py-2">
+                                        <input type="text" wire:model.blur="studentList.{{ $index }}.remark"
+                                            class="min-w-36 rounded-lg border-gray-300 text-sm shadow-sm focus:border-primary-500 focus:ring-primary-500 dark:border-white/10 dark:bg-gray-900">
+                                    </td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -34,6 +58,8 @@
                     <x-filament::button icon="heroicon-o-check" wire:click="saveMarks">Save marks</x-filament::button>
                 </div>
             </x-filament::section>
+        @else
+            <x-filament::empty-state icon="heroicon-o-pencil-square" heading="Select an exam, class, section and subject" description="Student marks will appear here once all filters are selected above." />
         @endif
     </div>
 </x-filament-panels::page>
