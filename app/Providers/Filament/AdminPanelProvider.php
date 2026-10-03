@@ -7,6 +7,7 @@ use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use App\Filament\AdminDashboard;
+use App\Filament\Pages\Auth\EditProfile;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
@@ -30,7 +31,7 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
-            ->profile()
+            ->profile(EditProfile::class, isSimple: false)
             ->homeUrl(fn (): string => auth()->user()?->user_type === 'teacher'
                 ? \App\Filament\Pages\TeacherDashboard::getUrl()
                 : AdminDashboard::getUrl())
