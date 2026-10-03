@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Filament\Pages\Concerns\HasTeacherQuickActions;
+use App\Filament\Pages\Concerns\HasTeacherTimetableGrid;
 use App\Filament\Resources\Attendances\AttendanceResource;
 use App\Filament\Resources\Homework\HomeworkResource;
 use App\Filament\Pages\TeacherMarksEntry;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\DB;
 class TeacherDashboard extends Page
 {
     use HasTeacherQuickActions;
+    use HasTeacherTimetableGrid;
 
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
@@ -40,6 +42,8 @@ class TeacherDashboard extends Page
     protected static ?string $title = 'Teacher Dashboard';
 
     protected string $view = 'filament.pages.teacher-dashboard';
+
+    public string $range = 'today';
 
     public static function canAccess(): bool
     {
@@ -148,7 +152,7 @@ class TeacherDashboard extends Page
                 'homework' => HomeworkResource::getUrl('index'),
                 'marks' => TeacherMarksEntry::getUrl(),
             ],
-        ];
+        ] + $this->timetableGridData();
     }
 
     public function approveMarkRequest(int $requestId): void

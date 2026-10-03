@@ -88,37 +88,7 @@
 
         <div class="grid gap-6 xl:grid-cols-3">
             <div class="space-y-6 xl:col-span-2">
-                <x-filament::section heading="Today's timetable" icon="heroicon-o-calendar-days">
-                    @if ($todayTimetable->isEmpty())
-                        <x-filament::empty-state icon="heroicon-o-calendar" heading="No periods today" description="Enjoy your free day, nothing is scheduled." compact />
-                    @else
-                        <div class="space-y-2">
-                            @foreach ($todayTimetable as $period)
-                                <div @class([
-                                    'flex flex-wrap items-center gap-3 rounded-lg border-s-4 bg-gray-50 px-4 py-3 dark:bg-white/5',
-                                    'border-s-warning-500' => $period->substitute_for_id,
-                                    'border-s-primary-500' => ! $period->substitute_for_id,
-                                ])>
-                                    <x-filament::badge color="gray" class="shrink-0 font-mono">
-                                        {{ substr($period->start_time, 0, 5) }}-{{ substr($period->end_time, 0, 5) }}
-                                    </x-filament::badge>
-                                    <div class="min-w-0 flex-1">
-                                        <div class="font-semibold">{{ $period->subject?->name ?? $period->break_label ?? 'Period' }}</div>
-                                        <div class="text-sm text-gray-500 dark:text-gray-400">
-                                            {{ $period->schoolClass?->name }} {{ $period->section?->name }}
-                                            @if ($period->room_no) · Room {{ $period->room_no }} @endif
-                                        </div>
-                                    </div>
-                                    @if ($period->substitute_for_id)
-                                        <x-filament::badge color="warning" icon="heroicon-m-arrow-path">
-                                            Substitute for {{ $period->substituteFor?->name }}
-                                        </x-filament::badge>
-                                    @endif
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-                </x-filament::section>
+                @include('filament.pages.partials.teacher-timetable-grid')
 
                 <x-filament::section heading="Incoming timetable exchange requests" icon="heroicon-o-arrows-right-left">
                     @forelse ($incomingExchanges as $exchange)
