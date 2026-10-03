@@ -15,6 +15,7 @@ class VehicleForm
         $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
 
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Vehicle Details')
                     ->schema([

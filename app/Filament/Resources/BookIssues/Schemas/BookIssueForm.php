@@ -24,6 +24,7 @@ class BookIssueForm
         $isStaff = fn (Get $get): bool => $get('member_type') === 'staff';
 
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Issue Book')
                     ->schema([

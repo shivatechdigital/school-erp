@@ -18,6 +18,7 @@ class FeeCollectionForm
     public static function configure(Schema $schema): Schema
     {
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Fee Payment')
                     ->icon('heroicon-o-banknotes')

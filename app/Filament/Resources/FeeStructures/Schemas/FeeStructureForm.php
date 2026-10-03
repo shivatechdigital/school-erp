@@ -20,6 +20,7 @@ class FeeStructureForm
         $needsBranch = fn (): bool => ! auth()->user()?->branch_id;
 
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Fee Structure Setup')
                     ->schema([

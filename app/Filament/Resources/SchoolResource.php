@@ -37,7 +37,7 @@ class SchoolResource extends \Filament\Resources\Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([
+        return $schema->columns(1)->components([
             Section::make('Basic Information')->columns(2)->schema([
                 TextInput::make('name')->required()->maxLength(255),
                 TextInput::make('code')->required()->maxLength(255)->unique(ignoreRecord: true),

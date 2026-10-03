@@ -31,7 +31,7 @@ class PlanResource extends \Filament\Resources\Resource
 
     public static function form(Schema $schema): Schema
     {
-        return $schema->components([
+        return $schema->columns(1)->components([
             Section::make('Plan Details')->columns(2)->schema([
                 TextInput::make('name')->required()->maxLength(255),
                 TextInput::make('slug')->required()->alphaDash()->unique(ignoreRecord: true)->maxLength(255),

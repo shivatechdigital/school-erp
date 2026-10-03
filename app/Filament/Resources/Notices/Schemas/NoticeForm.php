@@ -33,6 +33,7 @@ class NoticeForm
         $needsSection = fn (Get $get): bool => $get('target_audience') === 'class_teacher';
 
         return $schema
+            ->columns(1)
             ->components([
                 Section::make('Notice Details')
                     ->schema([

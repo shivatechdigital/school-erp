@@ -35,7 +35,7 @@ class SubjectResource extends \Filament\Resources\Resource
     {
         $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
 
-        return $schema->components([
+        return $schema->columns(1)->components([
             Section::make('Subject Details')->columns(2)->schema([
                 Select::make('school_id')->relationship('school', 'name')->searchable()->preload()
                     ->visible($isSuperAdmin)->required($isSuperAdmin),
