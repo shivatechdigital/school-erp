@@ -15,7 +15,7 @@ class TeacherLeave extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Teacher';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 3;
 
     protected static ?string $navigationLabel = 'Leave';
 

@@ -233,15 +233,32 @@ trait HasTeacherQuickActions
             ->label('Add Student Note')
             ->icon('heroicon-o-pencil-square')
             ->form([
+                Select::make('class_id')
+                    ->label('Class')
+                    ->options(fn (): array => Section::query()->where('class_teacher_id', auth()->id())
+                        ->with('class')->get()->pluck('class')->filter()->unique('id')
+                        ->sortBy('sort_order')->pluck('name', 'id')->all())
+                    ->live()
+                    ->afterStateUpdated(fn (callable $set) => $set('section_id', null))
+                    ->required(),
+                Select::make('section_id')
+                    ->label('Section')
+                    ->options(fn (Get $get): array => Section::query()->where('class_teacher_id', auth()->id())
+                        ->where('class_id', $get('class_id'))->orderBy('name')->pluck('name', 'id')->all())
+                    ->live()
+                    ->afterStateUpdated(fn (callable $set) => $set('student_id', null))
+                    ->required(),
                 Select::make('student_id')
                     ->label('Student')
-                    ->options(fn (): array => Student::query()->whereHas('section', fn (Builder $query) => $query->where('class_teacher_id', auth()->id()))
+                    ->options(fn (Get $get): array => Student::query()
+                        ->whereHas('section', fn (Builder $query) => $query->where('class_teacher_id', auth()->id())->whereKey($get('section_id')))
                         ->orderBy('first_name')->get()->mapWithKeys(fn (Student $student): array => [$student->id => "{$student->full_name} ({$student->admission_no})"])->all())
                     ->searchable()->required(),
                 Textarea::make('note')->required()->maxLength(5000),
             ])
             ->action(function (array $data): void {
                 $student = Student::query()->whereKey($data['student_id'])
+                    ->where('section_id', $data['section_id'])
                     ->whereHas('section', fn (Builder $query) => $query->where('class_teacher_id', auth()->id()))
                     ->firstOrFail();
                 StudentNote::query()->create([

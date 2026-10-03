@@ -106,13 +106,15 @@ class HomeworkForm
                         DatePicker::make('assigned_date')
                             ->label('Assigned Date')
                             ->default(now())
-                            ->required(),
+                            ->required()
+                            ->columnSpanFull(),
 
                         DatePicker::make('due_date')
                             ->label('Submission Due Date')
                             ->default(now()->addDays(2))
                             ->afterOrEqual('assigned_date')
-                            ->required(),
+                            ->required()
+                            ->columnSpanFull(),
 
                         Toggle::make('allow_late_submission')
                             ->label('Allow Late Submissions')

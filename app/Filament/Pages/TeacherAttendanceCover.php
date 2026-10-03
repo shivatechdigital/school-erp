@@ -14,7 +14,7 @@ class TeacherAttendanceCover extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Teacher';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'Attendance Cover';
 

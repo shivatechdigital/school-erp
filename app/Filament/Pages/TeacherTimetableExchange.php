@@ -14,7 +14,7 @@ class TeacherTimetableExchange extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Teacher';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $navigationLabel = 'Timetable Exchange';
 

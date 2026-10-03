@@ -29,7 +29,7 @@ class TeacherMarksEntry extends Page implements HasSchemas
 
     protected static string|\UnitEnum|null $navigationGroup = 'Teacher';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $navigationLabel = 'Marks Entry';
 

@@ -14,7 +14,7 @@ class TeacherClassNotice extends Page
 
     protected static string|\UnitEnum|null $navigationGroup = 'Teacher';
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 9;
 
     protected static ?string $navigationLabel = 'Class Notices';
 
