@@ -52,14 +52,7 @@ class TeacherDashboard extends Page
 
     protected function getHeaderActions(): array
     {
-        return [
-            $this->delegateAttendanceAction(),
-            $this->requestExchangeAction(),
-            $this->requestLeaveAction(),
-            $this->addStudentNoteAction(),
-            $this->createExamPaperAction(),
-            $this->publishNoticeAction(),
-        ];
+        return [];
     }
 
     protected function getViewData(): array

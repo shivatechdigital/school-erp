@@ -16,7 +16,18 @@
     <div class="space-y-6">
         {{-- Hero greeting --}}
         <div class="overflow-hidden rounded-xl bg-gradient-to-r from-primary-600 to-primary-400 px-6 py-5 text-white shadow-sm dark:from-primary-700 dark:to-primary-500">
-            <div class="flex flex-wrap items-center justify-between gap-3">
+            <div class="flex flex-wrap items-center gap-4">
+                @if (auth()->user()?->profile_photo)
+                    <img
+                        src="{{ \Illuminate\Support\Facades\Storage::disk('public')->url(auth()->user()->profile_photo) }}"
+                        alt="{{ auth()->user()?->name }}"
+                        class="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-white/40"
+                    />
+                @else
+                    <span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white/15 text-xl font-bold ring-2 ring-white/40">
+                        {{ $initials(auth()->user()?->name) }}
+                    </span>
+                @endif
                 <div>
                     <p class="text-sm font-medium text-white/80">{{ now()->format('l, d F Y') }}</p>
                     <h2 class="mt-1 text-xl font-bold">Welcome back, {{ auth()->user()?->name }} 👋</h2>
@@ -25,7 +36,31 @@
                         {{ $sections->count() }} assigned {{ \Illuminate\Support\Str::plural('section', $sections->count()) }}
                     </p>
                 </div>
-                <x-filament::icon icon="heroicon-o-academic-cap" class="h-16 w-16 text-white/20" />
+            </div>
+        </div>
+
+        {{-- Quick actions --}}
+        <div>
+            <h3 class="mb-3 text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Quick Actions</h3>
+            <div class="flex flex-wrap gap-3">
+                <x-filament::button color="primary" icon="heroicon-o-user-plus" wire:click="mountAction('delegateAttendance')">
+                    Assign Attendance Cover
+                </x-filament::button>
+                <x-filament::button color="primary" icon="heroicon-o-arrows-right-left" wire:click="mountAction('requestExchange')">
+                    Request Timetable Exchange
+                </x-filament::button>
+                <x-filament::button color="primary" icon="heroicon-o-calendar" wire:click="mountAction('requestLeave')">
+                    Apply for Leave
+                </x-filament::button>
+                <x-filament::button color="primary" icon="heroicon-o-pencil-square" wire:click="mountAction('addStudentNote')">
+                    Add Student Note
+                </x-filament::button>
+                <x-filament::button color="primary" icon="heroicon-o-document-arrow-up" wire:click="mountAction('createExamPaper')">
+                    Upload Exam Paper
+                </x-filament::button>
+                <x-filament::button color="primary" icon="heroicon-o-megaphone" wire:click="mountAction('publishNotice')">
+                    Send Class Notice
+                </x-filament::button>
             </div>
         </div>
 
