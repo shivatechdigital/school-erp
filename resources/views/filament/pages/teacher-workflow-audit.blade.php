@@ -7,6 +7,9 @@
                         <span class="font-medium">{{ $grant->grantedBy?->name }}</span>
                         allowed <span class="font-medium">{{ $grant->teacher?->name }}</span>
                         to take attendance for {{ $grant->section?->class?->name }} {{ $grant->section?->name }}
+                        @if ($grant->reason)
+                            <div class="italic text-gray-500 dark:text-gray-400">"{{ $grant->reason }}"</div>
+                        @endif
                     </div>
                     <div class="flex items-center gap-2">
                         <span class="text-gray-500 dark:text-gray-400">{{ $grant->valid_from?->format('d M Y H:i') }} → {{ $grant->valid_until?->format('d M Y H:i') }}</span>

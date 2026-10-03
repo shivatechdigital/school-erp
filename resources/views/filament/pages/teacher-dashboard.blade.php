@@ -267,6 +267,9 @@
                                     <x-filament::icon icon="heroicon-m-clock" class="h-4 w-4" />
                                     Until {{ $grant->valid_until?->format('d M, H:i') }}
                                 </div>
+                                @if ($grant->reason)
+                                    <div class="mt-1 italic text-gray-500 dark:text-gray-400">"{{ $grant->reason }}"</div>
+                                @endif
                             </div>
                             <x-filament::icon-button icon="heroicon-m-x-mark" color="danger" label="Revoke access" wire:click="revokeAttendanceGrant({{ $grant->id }})" />
                         </div>

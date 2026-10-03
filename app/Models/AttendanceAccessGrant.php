@@ -12,7 +12,7 @@ class AttendanceAccessGrant extends Model
 
     protected $fillable = [
         'school_id', 'branch_id', 'section_id', 'teacher_id', 'granted_by',
-        'valid_from', 'valid_until', 'revoked_at',
+        'reason', 'valid_from', 'valid_until', 'revoked_at',
     ];
 
     protected function casts(): array
