@@ -21,6 +21,7 @@ class StaffResource extends Resource
     public const STAFF_TYPES = [
         'school_admin', 'branch_admin', 'teacher',
         'accountant', 'librarian', 'transport_manager', 'receptionist',
+        'hr', 'doctor',
     ];
 
     protected static ?string $model = User::class;

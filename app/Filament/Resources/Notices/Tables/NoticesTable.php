@@ -19,9 +19,11 @@ class NoticesTable
         $audienceLabels = [
             'all' => 'All School',
             'staff' => 'Staff Only',
+            'teachers' => 'Teachers Only',
             'students' => 'Students & Parents',
             'guardians' => 'Parents Only',
             'specific_class' => 'Specific Class',
+            'class_teacher' => 'Class Teacher',
         ];
 
         return $table

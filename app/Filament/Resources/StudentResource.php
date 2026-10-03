@@ -122,6 +122,14 @@ class StudentResource extends \Filament\Resources\Resource
                         ->pluck('name', 'id')
                         ->all();
                 })->searchable()->required(),
+                Select::make('house_id')
+                    ->label('House')
+                    ->relationship(
+                        'house',
+                        'name',
+                        modifyQueryUsing: fn (Builder $query, Get $get) => $query
+                            ->when($get('school_id'), fn (Builder $houses, $schoolId) => $houses->where('school_id', $schoolId)),
+                    )->searchable()->preload(),
                 DatePicker::make('admission_date')->required()->default(now())->native(false),
                 Select::make('admission_type')->options([
                     'new' => 'New Admission', 'transfer' => 'Transfer', 're-admission' => 'Re-Admission',
@@ -162,6 +170,7 @@ class StudentResource extends \Filament\Resources\Resource
                 TextColumn::make('full_name')->label('Student Name')->searchable(['first_name', 'middle_name', 'last_name'])->sortable(),
                 TextColumn::make('class.name')->label('Class')->sortable(),
                 TextColumn::make('section.name')->label('Section'),
+                TextColumn::make('house.name')->label('House')->badge()->placeholder('—'),
                 TextColumn::make('roll_no')->sortable(),
                 TextColumn::make('gender')->badge(),
                 TextColumn::make('phone')->searchable(),
@@ -224,6 +233,20 @@ class StudentResource extends \Filament\Resources\Resource
                             }
 
                             $records->each->update(['class_id' => $newClass->id]);
+                        }),
+                    BulkAction::make('assign_house')
+                        ->label('Assign to House')
+                        ->icon('heroicon-o-flag')
+                        ->requiresConfirmation()
+                        ->form([
+                            Select::make('house_id')
+                                ->label('House')
+                                ->relationship('house', 'name')
+                                ->required()
+                                ->searchable(),
+                        ])
+                        ->action(function (Collection $records, array $data): void {
+                            $records->each->update(['house_id' => $data['house_id']]);
                         }),
                 ]),
             ])

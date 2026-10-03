@@ -48,8 +48,10 @@ class StaffTable
                     })
                     ->formatStateUsing(fn (string $state): string => ucwords(str_replace('_', ' ', $state))),
 
-                TextColumn::make('department')
-                    ->searchable(),
+                TextColumn::make('departmentRecord.name')
+                    ->label('Department')
+                    ->searchable()
+                    ->placeholder('—'),
 
                 TextColumn::make('designation'),
 

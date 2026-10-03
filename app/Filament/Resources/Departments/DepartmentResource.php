@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Departments;
 use App\Filament\Resources\Departments\Pages\CreateDepartment;
 use App\Filament\Resources\Departments\Pages\EditDepartment;
 use App\Filament\Resources\Departments\Pages\ListDepartments;
+use App\Filament\Resources\Departments\RelationManagers\StaffRelationManager;
 use App\Filament\Resources\Departments\Schemas\DepartmentForm;
 use App\Filament\Resources\Departments\Tables\DepartmentsTable;
 use App\Models\Department;
@@ -39,7 +40,7 @@ class DepartmentResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            StaffRelationManager::class,
         ];
     }
 

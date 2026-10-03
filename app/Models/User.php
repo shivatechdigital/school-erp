@@ -19,7 +19,7 @@ use Spatie\Permission\Traits\HasRoles;
 #[Fillable([
     'name', 'email', 'password', 'school_id', 'branch_id', 'employee_code', 'phone',
     'alternate_phone', 'profile_photo', 'gender', 'date_of_birth', 'blood_group', 'address',
-    'city', 'state', 'pincode', 'qualification', 'designation', 'department', 'joining_date',
+    'city', 'state', 'pincode', 'qualification', 'designation', 'department', 'department_id', 'joining_date',
     'salary', 'user_type', 'status', 'last_login_at',
 ])]
 #[Hidden(['password', 'remember_token'])]
@@ -53,7 +53,7 @@ class User extends Authenticatable implements FilamentUser
 
         return $this->status === 'active' && in_array($this->user_type, [
             'school_admin', 'branch_admin', 'teacher', 'accountant', 'librarian',
-            'transport_manager', 'receptionist',
+            'transport_manager', 'receptionist', 'hr', 'doctor',
         ], true);
     }
 
@@ -75,6 +75,16 @@ class User extends Authenticatable implements FilamentUser
     public function guardian()
     {
         return $this->hasOne(Guardian::class);
+    }
+
+    public function staffAttendances()
+    {
+        return $this->hasMany(StaffAttendance::class);
+    }
+
+    public function departmentRecord()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
     }
 
     // User has no tenant global scope; restrict to the logged-in user's school/branch.

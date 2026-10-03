@@ -14,7 +14,7 @@ class Student extends Model
 
     protected $fillable = [
         'school_id', 'branch_id', 'academic_year_id',
-        'class_id', 'section_id', 'user_id',
+        'class_id', 'section_id', 'house_id', 'user_id',
         'admission_no', 'roll_no', 'gr_no', 'student_code', 'first_name',
         'middle_name', 'last_name', 'gender',
         'date_of_birth', 'birth_place', 'blood_group', 'religion', 'caste', 'category',
@@ -35,11 +35,13 @@ class Student extends Model
     // Relationships
     public function class() { return $this->belongsTo(SchoolClass::class, 'class_id'); }
     public function section() { return $this->belongsTo(Section::class); }
+    public function house() { return $this->belongsTo(House::class); }
     public function academicYear() { return $this->belongsTo(AcademicYear::class); }
     public function user() { return $this->belongsTo(User::class); }
     public function guardians() { return $this->belongsToMany(Guardian::class, 'guardian_student')->withPivot('relation', 'is_primary')->withTimestamps(); }
     public function documents() { return $this->hasMany(StudentDocument::class); }
     public function notes() { return $this->hasMany(StudentNote::class); }
+    public function attendances() { return $this->hasMany(StudentAttendance::class); }
 
     public function getFullNameAttribute(): string
     {

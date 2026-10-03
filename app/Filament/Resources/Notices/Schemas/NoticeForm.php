@@ -19,15 +19,18 @@ class NoticeForm
     public const AUDIENCES = [
         'all' => 'Entire School (Staff, Students & Parents)',
         'staff' => 'Staff Only',
+        'teachers' => 'Teachers Only',
         'students' => 'All Students & Parents',
         'guardians' => 'Parents/Guardians Only',
         'specific_class' => 'Specific Class / Section',
+        'class_teacher' => "A Section's Class Teacher",
     ];
 
     public static function configure(Schema $schema): Schema
     {
         $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-        $isSpecificClass = fn (Get $get): bool => $get('target_audience') === 'specific_class';
+        $needsClass = fn (Get $get): bool => in_array($get('target_audience'), ['specific_class', 'class_teacher'], true);
+        $needsSection = fn (Get $get): bool => $get('target_audience') === 'class_teacher';
 
         return $schema
             ->components([
@@ -77,15 +80,17 @@ class NoticeForm
                         Select::make('class_id')
                             ->label('Class')
                             ->relationship('schoolClass', 'name')
-                            ->visible($isSpecificClass)
-                            ->required($isSpecificClass)
+                            ->visible($needsClass)
+                            ->required($needsClass)
                             ->live()
                             ->afterStateUpdated(fn (Set $set) => $set('section_id', null)),
 
                         Select::make('section_id')
-                            ->label('Section (Optional)')
+                            ->label('Section')
                             ->relationship('section', 'name', fn (Builder $query, Get $get) => $query->where('class_id', $get('class_id')))
-                            ->visible($isSpecificClass),
+                            ->visible($needsClass)
+                            ->required($needsSection)
+                            ->helperText(fn (Get $get): ?string => $get('target_audience') === 'specific_class' ? 'Leave blank to notify the whole class.' : null),
 
                         DatePicker::make('publish_date')
                             ->label('Publish Date')

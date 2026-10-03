@@ -17,4 +17,9 @@ class Department extends Model
     {
         return ['is_active' => 'boolean'];
     }
+
+    public function staff()
+    {
+        return $this->hasMany(User::class, 'department_id');
+    }
 }

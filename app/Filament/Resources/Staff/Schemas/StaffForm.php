@@ -96,17 +96,17 @@ class StaffForm
                                 'librarian' => 'Librarian',
                                 'transport_manager' => 'Transport Manager',
                                 'receptionist' => 'Receptionist',
+                                'hr' => 'HR',
+                                'doctor' => 'Doctor',
                             ]))
                             ->required()
                             ->default('teacher'),
 
-                        TextInput::make('department')
+                        Select::make('department_id')
                             ->label('Department')
-                            ->datalist([
-                                'Mathematics', 'Science', 'English', 'Hindi',
-                                'Social Science', 'Computer', 'Physical Education',
-                                'Arts', 'Admin', 'Accounts',
-                            ]),
+                            ->relationship('departmentRecord', 'name')
+                            ->searchable()
+                            ->preload(),
 
                         TextInput::make('designation')
                             ->label('Designation')
