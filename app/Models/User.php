@@ -17,7 +17,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
 #[Fillable([
-    'name', 'email', 'password', 'school_id', 'branch_id', 'employee_code', 'phone',
+    'name', 'email', 'password', 'must_change_password', 'school_id', 'branch_id', 'employee_code', 'phone',
     'alternate_phone', 'profile_photo', 'gender', 'date_of_birth', 'blood_group', 'address',
     'city', 'state', 'pincode', 'qualification', 'designation', 'department', 'department_id', 'joining_date',
     'salary', 'user_type', 'status', 'last_login_at',
@@ -38,6 +38,7 @@ class User extends Authenticatable implements FilamentUser
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'must_change_password' => 'boolean',
             'date_of_birth' => 'date',
             'joining_date' => 'date',
             'salary' => 'decimal:2',
