@@ -57,7 +57,7 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 AdminDashboard::class,
             ])
-            ->navigationGroups(['Academics'])
+            ->navigationGroups(['Academics', 'Admin Section', 'Setup', 'Examination'])
             ->navigationItems([
                 NavigationItem::make('Assign Class Teacher')
                     ->group('Academics')
