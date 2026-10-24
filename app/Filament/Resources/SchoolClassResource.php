@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
 use App\Filament\Resources\SchoolClassResource\Pages;
 use App\Models\SchoolClass;
-use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
@@ -19,17 +19,15 @@ use UnitEnum;
 
 class SchoolClassResource extends \Filament\Resources\Resource
 {
-    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+    use HidesResourcesFromTeachers;
 
     protected static ?string $model = SchoolClass::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string|UnitEnum|null $navigationGroup = 'Academics';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Setup';
+    protected static ?int $navigationSort = 2;
 
-    protected static ?int $navigationSort = 3;
-
-    protected static ?string $navigationLabel = 'Classes';
+    protected static ?string $navigationLabel = 'Class';
 
     public static function form(Schema $schema): Schema
     {

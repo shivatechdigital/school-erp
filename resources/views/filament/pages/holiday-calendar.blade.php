@@ -108,7 +108,7 @@
             <span class="inline-flex items-center gap-1.5">
                 <span class="h-2.5 w-2.5 rounded-full bg-amber-500"></span> Holiday
             </span>
-            <span class="text-gray-400 dark:text-gray-500">Kisi bhi date par click karke holiday add/edit/remove karein.</span>
+            <span class="text-gray-400 dark:text-gray-500">Kisi bhi date par click karke ek din ka holiday add/edit/remove karein, ya 1-3 hafte jaisi lambi chutti (Winter Vacation) ke liye upar "Add Holiday Range" button use karein.</span>
         </div>
     </div>
 </x-filament-panels::page>

@@ -2,34 +2,30 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
 use App\Filament\Resources\SubjectResource\Pages;
 use App\Models\Subject;
-use BackedEnum;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use UnitEnum;
 
 class SubjectResource extends \Filament\Resources\Resource
 {
-    use \App\Filament\Resources\Concerns\HidesResourcesFromTeachers;
+    use HidesResourcesFromTeachers;
 
     protected static ?string $model = Subject::class;
 
-    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-book-open';
+    protected static string|UnitEnum|null $navigationGroup = 'Academics';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Setup';
-
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

@@ -79,6 +79,36 @@ class AcademicSessionAndHolidayCalendarTest extends TestCase
         $this->assertFalse(Holiday::query()->where('school_id', $principal->school_id)->whereDate('date', $date)->exists());
     }
 
+    public function test_adding_a_continuous_holiday_range(): void
+    {
+        $principal = User::query()->where('email', 'principal@demo.com')->firstOrFail();
+        $this->actingAs($principal);
+
+        $session = AcademicYear::query()->where('school_id', $principal->school_id)->where('is_current', true)->firstOrFail();
+        $start = $session->start_date->copy()->addDays(10);
+        $end = $start->copy()->addDays(20); // 3 week span
+
+        Livewire::test(HolidayCalendar::class)
+            ->mountAction('holidayRange', arguments: [])
+            ->setActionData([
+                'holiday_name' => 'Winter Vacation',
+                'start_date' => $start->toDateString(),
+                'end_date' => $end->toDateString(),
+                'description' => null,
+            ])
+            ->callMountedAction()
+            ->assertHasNoActionErrors();
+
+        $this->assertSame(
+            21,
+            Holiday::query()->where('school_id', $principal->school_id)
+                ->whereDate('date', '>=', $start->toDateString())
+                ->whereDate('date', '<=', $end->toDateString())
+                ->where('title', 'Winter Vacation')
+                ->count(),
+        );
+    }
+
     public function test_month_navigation_is_bounded_by_the_academic_session(): void
     {
         $principal = User::query()->where('email', 'principal@demo.com')->firstOrFail();

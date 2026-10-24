@@ -2,19 +2,22 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\AdminDashboard;
+use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\TeacherDashboard;
+use App\Filament\Resources\SectionResource;
+use App\Filament\Widgets\StatsOverview;
+use App\Http\Middleware\EnsurePasswordIsChanged;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
-use App\Filament\AdminDashboard;
-use App\Filament\Pages\Auth\EditProfile;
-use App\Http\Middleware\EnsurePasswordIsChanged;
+use Filament\Navigation\NavigationItem;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
 use Filament\Widgets\AccountWidget;
 use Filament\Widgets\FilamentInfoWidget;
-use App\Filament\Widgets\StatsOverview;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
@@ -34,7 +37,7 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->profile(EditProfile::class, isSimple: false)
             ->homeUrl(fn (): string => auth()->user()?->user_type === 'teacher'
-                ? \App\Filament\Pages\TeacherDashboard::getUrl()
+                ? TeacherDashboard::getUrl()
                 : AdminDashboard::getUrl())
             ->colors([
                 'primary' => Color::Blue,
@@ -53,6 +56,19 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([
                 AdminDashboard::class,
+            ])
+            ->navigationGroups(['Academics'])
+            ->navigationItems([
+                NavigationItem::make('Assign Class Teacher')
+                    ->group('Academics')
+                    ->url(fn (): string => SectionResource::getUrl('index'))
+                    ->sort(5)
+                    ->visible(fn (): bool => auth()->user()?->user_type !== 'teacher'),
+                NavigationItem::make('Assign Subject')
+                    ->group('Academics')
+                    ->badge('Soon')
+                    ->sort(6)
+                    ->visible(fn (): bool => auth()->user()?->user_type !== 'teacher'),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([

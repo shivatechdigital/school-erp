@@ -5,6 +5,7 @@ namespace App\Filament\Pages;
 use App\Models\AcademicYear;
 use App\Models\Holiday;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -84,6 +85,75 @@ class HolidayCalendar extends Page
         $this->month = $today->format('Y-m');
     }
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            $this->holidayRangeAction(),
+        ];
+    }
+
+    /** Marks a whole continuous span (e.g. winter vacation) as a holiday in one go. */
+    protected function holidayRangeAction(): Action
+    {
+        return Action::make('holidayRange')
+            ->label('Add Holiday Range')
+            ->icon('heroicon-o-calendar-days')
+            ->modalHeading('Add Holiday Range')
+            ->modalDescription('e.g. Winter Vacation, Summer Break — ek saath poore hafte/hafton ka holiday set karein.')
+            ->modalSubmitActionLabel('Save')
+            ->form([
+                TextInput::make('holiday_name')
+                    ->label('Holiday name')
+                    ->required()
+                    ->maxLength(255)
+                    ->placeholder('e.g. Winter Vacation'),
+                DatePicker::make('start_date')
+                    ->label('From')
+                    ->required()
+                    ->native(false)
+                    ->displayFormat('d/m/Y'),
+                DatePicker::make('end_date')
+                    ->label('To')
+                    ->required()
+                    ->native(false)
+                    ->displayFormat('d/m/Y')
+                    ->afterOrEqual('start_date'),
+                Textarea::make('description')
+                    ->label('Notes (optional)')
+                    ->rows(2),
+            ])
+            ->action(function (array $data): void {
+                $start = Carbon::parse($data['start_date'])->startOfDay();
+                $end = Carbon::parse($data['end_date'])->startOfDay();
+
+                if ($end->diffInDays($start) > 180) {
+                    Notification::make()->danger()->title('Range is too long (max 180 days)')->send();
+
+                    return;
+                }
+
+                for ($day = $start->copy(); $day->lte($end); $day->addDay()) {
+                    $this->upsertHoliday($day->toDateString(), $data['holiday_name'], $data['description'] ?? null);
+                }
+
+                $this->month = $start->format('Y-m');
+
+                Notification::make()->success()->title('Holiday range saved')->send();
+            });
+    }
+
+    private function upsertHoliday(string $date, string $title, ?string $description): void
+    {
+        $existing = $this->holidayFor($date);
+        $attributes = ['title' => $title, 'description' => $description];
+
+        if ($existing) {
+            $existing->update($attributes);
+        } else {
+            Holiday::query()->create($attributes + ['school_id' => auth()->user()->school_id, 'date' => $date]);
+        }
+    }
+
     /**
      * Not listed in getHeaderActions() on purpose: it's only ever opened by clicking a
      * calendar day cell (via mountAction), so no generic button renders in the header.
@@ -124,18 +194,7 @@ class HolidayCalendar extends Page
                     return;
                 }
 
-                $attributes = ['title' => $title, 'description' => $data['description'] ?? null];
-
-                // whereDate() lookup above means a plain updateOrCreate() match would miss on
-                // drivers (e.g. sqlite) that store the date column with a time component.
-                if ($existing) {
-                    $existing->update($attributes);
-                } else {
-                    Holiday::query()->create($attributes + [
-                        'school_id' => auth()->user()->school_id,
-                        'date' => $arguments['date'],
-                    ]);
-                }
+                $this->upsertHoliday($arguments['date'], $title, $data['description'] ?? null);
 
                 Notification::make()->success()->title('Holiday saved')->send();
             });
