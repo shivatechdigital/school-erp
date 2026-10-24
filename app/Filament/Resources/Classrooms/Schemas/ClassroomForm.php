@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources\Classrooms\Schemas;
 
+use App\Models\SchoolClass;
+use App\Models\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Section as FormSection;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
@@ -17,7 +19,7 @@ class ClassroomForm
         $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
 
         return $schema->columns(1)->components([
-            Section::make('Class Room Details')->columns(2)->schema([
+            FormSection::make('Class Room Details')->columns(2)->schema([
                 Select::make('school_id')
                     ->relationship('school', 'name')
                     ->searchable()
@@ -52,6 +54,35 @@ class ClassroomForm
                     ->minValue(1)
                     ->default(30)
                     ->required(),
+                Select::make('class_id')
+                    ->label('Class')
+                    ->options(fn (Get $get): array => SchoolClass::query()
+                        ->when(
+                            $get('school_id') ?? auth()->user()?->school_id,
+                            fn (Builder $classes, int|string $schoolId): Builder => $classes->where('school_id', $schoolId),
+                        )
+                        ->orderBy('sort_order')
+                        ->pluck('name', 'id')
+                        ->all())
+                    ->live()
+                    ->dehydrated(false)
+                    ->afterStateUpdated(fn (callable $set) => $set('section_id', null)),
+                Select::make('section_id')
+                    ->label('Section')
+                    ->options(function (Get $get): array {
+                        if (! $get('class_id')) {
+                            return [];
+                        }
+
+                        return Section::query()
+                            ->where('class_id', $get('class_id'))
+                            ->where('is_active', true)
+                            ->orderBy('name')
+                            ->pluck('name', 'id')
+                            ->all();
+                    })
+                    ->searchable()
+                    ->placeholder('Not assigned to a section yet'),
                 Toggle::make('is_active')->default(true),
             ]),
         ]);

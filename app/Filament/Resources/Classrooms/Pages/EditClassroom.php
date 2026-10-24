@@ -10,6 +10,13 @@ class EditClassroom extends EditRecord
 {
     protected static string $resource = ClassroomResource::class;
 
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['class_id'] = $this->record->section?->class_id;
+
+        return $data;
+    }
+
     protected function getHeaderActions(): array
     {
         return [

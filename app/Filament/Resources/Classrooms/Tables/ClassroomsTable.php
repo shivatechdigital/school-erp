@@ -18,6 +18,8 @@ class ClassroomsTable
                 TextColumn::make('school.name')->label('School')->searchable(),
                 TextColumn::make('branch.name')->label('Branch')->placeholder('School-wide'),
                 TextColumn::make('room_number')->label('Room Number / Name')->searchable()->sortable()->weight('bold'),
+                TextColumn::make('section.class.name')->label('Class')->placeholder('—'),
+                TextColumn::make('section.name')->label('Section')->placeholder('—'),
                 TextColumn::make('floor')->badge(),
                 TextColumn::make('capacity')->numeric()->sortable(),
                 IconColumn::make('is_active')->boolean(),

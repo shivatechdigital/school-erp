@@ -7,6 +7,7 @@ use App\Traits\BelongsToSchool;
 use Database\Factories\ClassroomFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Classroom extends Model
 {
@@ -14,7 +15,7 @@ class Classroom extends Model
     use BelongsToBranch, BelongsToSchool, HasFactory;
 
     protected $fillable = [
-        'school_id', 'branch_id', 'room_number', 'floor', 'capacity', 'is_active',
+        'school_id', 'branch_id', 'section_id', 'room_number', 'floor', 'capacity', 'is_active',
     ];
 
     protected function casts(): array
@@ -23,5 +24,10 @@ class Classroom extends Model
             'capacity' => 'integer',
             'is_active' => 'boolean',
         ];
+    }
+
+    public function section(): BelongsTo
+    {
+        return $this->belongsTo(Section::class);
     }
 }
