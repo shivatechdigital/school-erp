@@ -25,7 +25,7 @@ class SubjectResource extends \Filament\Resources\Resource
 
     protected static string|UnitEnum|null $navigationGroup = 'Academics';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {
@@ -37,6 +37,12 @@ class SubjectResource extends \Filament\Resources\Resource
                     ->visible($isSuperAdmin)->required($isSuperAdmin),
                 TextInput::make('name')->required()->maxLength(255),
                 TextInput::make('code')->maxLength(255),
+                Select::make('academic_department_id')
+                    ->label('Department')
+                    ->relationship('department', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->placeholder('Common (no department)'),
                 Select::make('type')->options([
                     'theory' => 'Theory', 'practical' => 'Practical', 'both' => 'Theory + Practical',
                 ])->required(),
@@ -52,6 +58,7 @@ class SubjectResource extends \Filament\Resources\Resource
             TextColumn::make('school.name')->label('School')->searchable(),
             TextColumn::make('name')->searchable()->sortable()->weight('bold'),
             TextColumn::make('code')->badge(),
+            TextColumn::make('department.name')->label('Department')->badge()->color('info')->placeholder('Common'),
             TextColumn::make('type')->badge(),
             IconColumn::make('is_optional')->boolean()->label('Optional'),
             IconColumn::make('is_active')->boolean(),

@@ -16,6 +16,8 @@ class DepartmentsTable
             ->columns([
                 TextColumn::make('name')->searchable()->sortable()->weight('bold'),
                 TextColumn::make('code')->badge()->color('info'),
+                TextColumn::make('head.name')->label('Head')->placeholder('—'),
+                TextColumn::make('subHead.name')->label('Sub Head')->placeholder('—')->toggleable(isToggledHiddenByDefault: true),
                 IconColumn::make('is_active')->boolean(),
             ])
             ->recordActions([

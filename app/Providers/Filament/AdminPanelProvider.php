@@ -51,6 +51,8 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('favicon.ico'))
             ->sidebarCollapsibleOnDesktop()
             ->darkMode()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -62,12 +64,12 @@ class AdminPanelProvider extends PanelProvider
                 NavigationItem::make('Assign Class Teacher')
                     ->group('Academics')
                     ->url(fn (): string => SectionResource::getUrl('index'))
-                    ->sort(5)
+                    ->sort(6)
                     ->visible(fn (): bool => auth()->user()?->user_type !== 'teacher'),
                 NavigationItem::make('Assign Subject')
                     ->group('Academics')
                     ->badge('Soon')
-                    ->sort(6)
+                    ->sort(7)
                     ->visible(fn (): bool => auth()->user()?->user_type !== 'teacher'),
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
