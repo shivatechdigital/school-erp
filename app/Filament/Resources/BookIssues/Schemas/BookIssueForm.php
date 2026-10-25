@@ -19,7 +19,6 @@ class BookIssueForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
         $isStudent = fn (Get $get): bool => $get('member_type') === 'student';
         $isStaff = fn (Get $get): bool => $get('member_type') === 'staff';
 
@@ -28,13 +27,6 @@ class BookIssueForm
             ->components([
                 Section::make('Issue Book')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         Select::make('book_id')
                             ->label('Select Book')
                             ->relationship('book', 'title', fn (Builder $query, ?BookIssue $record) => $query->where(fn (Builder $q) => $q

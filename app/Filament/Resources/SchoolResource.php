@@ -131,4 +131,9 @@ class SchoolResource extends \Filament\Resources\Resource
     {
         return auth()->user()?->user_type === 'super_admin';
     }
+
+    public static function canCreate(): bool
+    {
+        return auth()->user()?->user_type === 'super_admin';
+    }
 }

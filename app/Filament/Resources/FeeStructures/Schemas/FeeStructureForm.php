@@ -7,7 +7,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -15,8 +14,7 @@ class FeeStructureForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-        // branch_id is NOT NULL; users without a fixed branch must pick one.
+        // branch_id is NOT NULL; users without a fixed branch (topbar set to "All Branches") must pick one.
         $needsBranch = fn (): bool => ! auth()->user()?->branch_id;
 
         return $schema
@@ -24,20 +22,12 @@ class FeeStructureForm
             ->components([
                 Section::make('Fee Structure Setup')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->live()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         Select::make('branch_id')
                             ->relationship(
                                 'branch',
                                 'name',
-                                fn (Builder $query, Get $get) => $query->when(
-                                    $get('school_id'),
+                                fn (Builder $query) => $query->when(
+                                    auth()->user()?->school_id,
                                     fn (Builder $q, $schoolId) => $q->where('school_id', $schoolId)
                                 )
                             )

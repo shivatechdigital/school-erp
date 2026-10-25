@@ -30,12 +30,8 @@ class BranchResource extends \Filament\Resources\Resource
 
     public static function form(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema->columns(1)->components([
             Section::make('Branch Details')->columns(2)->schema([
-                Select::make('school_id')->relationship('school', 'name')->searchable()->preload()
-                    ->visible($isSuperAdmin)->required($isSuperAdmin),
                 TextInput::make('name')->required()->maxLength(255),
                 TextInput::make('code')->required()->maxLength(255)->unique(ignoreRecord: true),
                 Toggle::make('is_main_branch'),
@@ -80,6 +76,11 @@ class BranchResource extends \Filament\Resources\Resource
     }
 
     public static function canViewAny(): bool
+    {
+        return in_array(auth()->user()?->user_type, ['super_admin', 'school_admin'], true);
+    }
+
+    public static function canCreate(): bool
     {
         return in_array(auth()->user()?->user_type, ['super_admin', 'school_admin'], true);
     }

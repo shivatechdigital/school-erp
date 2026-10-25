@@ -7,7 +7,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -15,19 +14,10 @@ class DepartmentForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
                 Section::make()->schema([
-                    Select::make('school_id')
-                        ->relationship('school', 'name')
-                        ->searchable()
-                        ->preload()
-                        ->visible($isSuperAdmin)
-                        ->required($isSuperAdmin)
-                        ->live(),
                     TextInput::make('name')
                         ->required()
                         ->placeholder('e.g., Mathematics'),
@@ -41,9 +31,9 @@ class DepartmentForm
                         ->relationship(
                             'head',
                             'name',
-                            modifyQueryUsing: fn (Builder $query, Get $get): Builder => $query
+                            modifyQueryUsing: fn (Builder $query): Builder => $query
                                 ->when(
-                                    $get('school_id') ?? auth()->user()?->school_id,
+                                    auth()->user()?->school_id,
                                     fn (Builder $users, int|string $schoolId): Builder => $users->where('school_id', $schoolId),
                                 ),
                         )
@@ -54,9 +44,9 @@ class DepartmentForm
                         ->relationship(
                             'subHead',
                             'name',
-                            modifyQueryUsing: fn (Builder $query, Get $get): Builder => $query
+                            modifyQueryUsing: fn (Builder $query): Builder => $query
                                 ->when(
-                                    $get('school_id') ?? auth()->user()?->school_id,
+                                    auth()->user()?->school_id,
                                     fn (Builder $users, int|string $schoolId): Builder => $users->where('school_id', $schoolId),
                                 ),
                         )

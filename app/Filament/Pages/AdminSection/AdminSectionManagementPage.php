@@ -4,10 +4,8 @@ namespace App\Filament\Pages\AdminSection;
 
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
-use Filament\Forms\Components\Select;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -50,7 +48,6 @@ abstract class AdminSectionManagementPage extends Page implements HasTable
         return $schema
             ->model(new $modelClass)
             ->components([
-                ...$this->tenantFields(),
                 ...$this->recordFormComponents(),
             ])
             ->statePath('data');
@@ -164,33 +161,6 @@ abstract class AdminSectionManagementPage extends Page implements HasTable
     abstract protected function recordFormComponents(): array;
 
     abstract protected function recordTableColumns(): array;
-
-    private function tenantFields(): array
-    {
-        return [
-            Select::make('school_id')
-                ->relationship('school', 'name')
-                ->searchable()
-                ->preload()
-                ->visible(fn (): bool => auth()->user()?->user_type === 'super_admin')
-                ->required(fn (): bool => auth()->user()?->user_type === 'super_admin')
-                ->live(),
-            Select::make('branch_id')
-                ->label('Branch (optional)')
-                ->relationship(
-                    'branch',
-                    'name',
-                    modifyQueryUsing: fn (Builder $query, Get $get): Builder => $query
-                        ->when(
-                            $get('school_id') ?? auth()->user()?->school_id,
-                            fn (Builder $branches, int|string $schoolId): Builder => $branches->where('school_id', $schoolId),
-                        ),
-                )
-                ->searchable()
-                ->preload()
-                ->visible(fn (): bool => ! auth()->user()?->branch_id),
-        ];
-    }
 
     private function recordFilePaths(Model $record): array
     {

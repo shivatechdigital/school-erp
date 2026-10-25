@@ -28,7 +28,6 @@ class NoticeForm
 
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
         $needsClass = fn (Get $get): bool => in_array($get('target_audience'), ['specific_class', 'class_teacher'], true);
         $needsSection = fn (Get $get): bool => $get('target_audience') === 'class_teacher';
 
@@ -37,13 +36,6 @@ class NoticeForm
             ->components([
                 Section::make('Notice Details')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         TextInput::make('title')
                             ->label('Title / Headline')
                             ->required()

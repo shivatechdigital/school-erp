@@ -11,7 +11,6 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section as FormSection;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -32,23 +31,19 @@ class SectionResource extends \Filament\Resources\Resource
 
     public static function form(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema->columns(1)->components([
             FormSection::make('Section Details')->columns(2)->schema([
-                Select::make('school_id')->relationship('school', 'name')->searchable()->preload()
-                    ->visible($isSuperAdmin)->required($isSuperAdmin)->live(),
                 Select::make('branch_id')->relationship(
-                    'branch', 'name', modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                        ->when($get('school_id'), fn (Builder $branches, $schoolId) => $branches->where('school_id', $schoolId)),
+                    'branch', 'name', modifyQueryUsing: fn (Builder $query) => $query
+                        ->when(auth()->user()?->school_id, fn (Builder $branches, $schoolId) => $branches->where('school_id', $schoolId)),
                 )->searchable()->preload()->required()->visible(fn (): bool => ! auth()->user()?->branch_id),
                 Select::make('class_id')->relationship(
-                    'class', 'name', modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                        ->when($get('school_id'), fn (Builder $classes, $schoolId) => $classes->where('school_id', $schoolId)),
+                    'class', 'name', modifyQueryUsing: fn (Builder $query) => $query
+                        ->when(auth()->user()?->school_id, fn (Builder $classes, $schoolId) => $classes->where('school_id', $schoolId)),
                 )->searchable()->preload()->required(),
                 Select::make('academic_year_id')->relationship(
-                    'academicYear', 'name', modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                        ->when($get('school_id'), fn (Builder $years, $schoolId) => $years->where('school_id', $schoolId)),
+                    'academicYear', 'name', modifyQueryUsing: fn (Builder $query) => $query
+                        ->when(auth()->user()?->school_id, fn (Builder $years, $schoolId) => $years->where('school_id', $schoolId)),
                 )->searchable()->preload()->required(),
                 TextInput::make('name')->required()->maxLength(255),
                 TextInput::make('capacity')->numeric()->minValue(1)->default(40)->required(),
@@ -57,8 +52,8 @@ class SectionResource extends \Filament\Resources\Resource
                 Select::make('class_teacher_id')->relationship(
                     'classTeacher',
                     'name',
-                    modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                        ->when($get('school_id') ?? auth()->user()?->school_id, fn (Builder $users, $schoolId) => $users->where('school_id', $schoolId))
+                    modifyQueryUsing: fn (Builder $query) => $query
+                        ->when(auth()->user()?->school_id, fn (Builder $users, $schoolId) => $users->where('school_id', $schoolId))
                         ->when(auth()->user()?->branch_id, fn (Builder $users, $branchId) => $users->where('branch_id', $branchId)),
                 )->searchable()->preload(),
                 Toggle::make('is_active')->default(true),

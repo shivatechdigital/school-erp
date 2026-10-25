@@ -22,8 +22,8 @@ return new class extends Migration
             $table->text('remarks')->nullable();
             $table->timestamps();
 
-            $table->unique(['house_activity_id', 'student_id']);
-            $table->index(['house_activity_id', 'house_id', 'status']);
+            $table->unique(['house_activity_id', 'student_id'], 'har_activity_student_unique');
+            $table->index(['house_activity_id', 'house_id', 'status'], 'har_activity_house_status_index');
         });
     }
 

@@ -16,20 +16,11 @@ class StudentTransportForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
                 Section::make('Student Allocation')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         Select::make('student_id')
                             ->label('Student')
                             ->relationship('student', 'first_name')

@@ -13,16 +13,8 @@ class HouseActivityForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema->columns(1)->components([
             Section::make('Activity Details')->columns(2)->schema([
-                Select::make('school_id')
-                    ->relationship('school', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->visible($isSuperAdmin)
-                    ->required($isSuperAdmin),
                 TextInput::make('name')->required()->maxLength(255)->placeholder('e.g., Inter-House Cricket'),
                 Select::make('category')
                     ->options([

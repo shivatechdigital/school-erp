@@ -17,8 +17,6 @@ class GuardianForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
@@ -31,13 +29,6 @@ class GuardianForm
                             ->avatar()
                             ->maxSize(2048)
                             ->columnSpanFull(),
-
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
 
                         TextInput::make('name')
                             ->required()

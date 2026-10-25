@@ -68,6 +68,36 @@ class User extends Authenticatable implements FilamentUser
         return $this->belongsTo(Branch::class);
     }
 
+    /** Schools a school_admin is permitted to switch into (irrelevant for super_admin, who can access all). */
+    public function schools()
+    {
+        return $this->belongsToMany(School::class)->withTimestamps();
+    }
+
+    /** Branches a branch_admin is permitted to switch into (irrelevant for super_admin/school_admin). */
+    public function branches()
+    {
+        return $this->belongsToMany(Branch::class)->withTimestamps();
+    }
+
+    public function canAccessSchool(int $schoolId): bool
+    {
+        if ($this->user_type === 'super_admin') {
+            return true;
+        }
+
+        return $this->schools()->whereKey($schoolId)->exists();
+    }
+
+    public function canAccessBranch(int $branchId): bool
+    {
+        if (in_array($this->user_type, ['super_admin', 'school_admin'], true)) {
+            return true;
+        }
+
+        return $this->branches()->whereKey($branchId)->exists();
+    }
+
     public function students()
     {
         return $this->hasMany(Student::class);

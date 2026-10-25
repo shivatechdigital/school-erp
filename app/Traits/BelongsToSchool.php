@@ -41,12 +41,35 @@ trait BelongsToSchool
     {
         $user = Auth::user();
 
-        if (! $user || $user->user_type === 'super_admin') {
+        if (! $user) {
+            return;
+        }
+
+        if ($user->user_type === 'super_admin') {
+            // Only fill in from the top bar's currently-selected context when the form
+            // didn't already provide an explicit value (e.g. a super-admin-only Select).
+            if (blank($model->getAttribute('school_id')) && $user->school_id) {
+                $model->setAttribute('school_id', $user->school_id);
+            }
+
+            if (
+                blank($model->getAttribute('branch_id')) && $user->branch_id
+                && ($model->isFillable('branch_id') || array_key_exists('branch_id', $model->getAttributes()))
+            ) {
+                $model->setAttribute('branch_id', $user->branch_id);
+            }
+
+            if (blank($model->getAttribute('school_id')) && (
+                $model->isFillable('school_id') || array_key_exists('school_id', $model->getAttributes())
+            )) {
+                throw new AuthorizationException('Select a school from the top bar first.');
+            }
+
             return;
         }
 
         if (! $user->school_id) {
-            throw new AuthorizationException('Your account is not assigned to a school.');
+            throw new AuthorizationException('Your account is not assigned to a school. Select one from the top bar first.');
         }
 
         $model->setAttribute('school_id', $user->school_id);

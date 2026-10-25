@@ -15,20 +15,11 @@ class BookForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
                 Section::make('Book Information')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         TextInput::make('title')
                             ->label('Book Title')
                             ->required()

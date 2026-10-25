@@ -42,4 +42,29 @@ class HouseActivity extends Model
             ->where('status', 'approved')
             ->count();
     }
+
+    /**
+     * Creates a House Activity Assignment row for every active house of this activity's
+     * school/branch that doesn't already have one. Safe to call repeatedly (idempotent).
+     */
+    public function syncHouseAssignments(): int
+    {
+        $alreadyAssignedHouseIds = $this->assignments()->pluck('house_id');
+
+        $houses = House::query()
+            ->withoutGlobalScope('branch')
+            ->where('school_id', $this->school_id)
+            ->where('is_active', true)
+            ->when($this->branch_id, fn ($query) => $query->where(function ($query): void {
+                $query->whereNull('branch_id')->orWhere('branch_id', $this->branch_id);
+            }))
+            ->whereNotIn('id', $alreadyAssignedHouseIds)
+            ->get();
+
+        foreach ($houses as $house) {
+            $this->assignments()->create(['house_id' => $house->id]);
+        }
+
+        return $houses->count();
+    }
 }

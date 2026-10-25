@@ -24,7 +24,6 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Section as FormSection;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -53,17 +52,13 @@ class StudentResource extends \Filament\Resources\Resource
 
     public static function form(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema->columns(1)->components([
             FormSection::make('School and Branch')->columns(2)->schema([
-                Select::make('school_id')->relationship('school', 'name')->searchable()->preload()
-                    ->visible($isSuperAdmin)->required($isSuperAdmin)->live(),
                 Select::make('branch_id')->relationship(
                     'branch',
                     'name',
-                    modifyQueryUsing: fn (Builder $query, Get $get) => $query
-                        ->when($get('school_id'), fn (Builder $branches, $schoolId) => $branches->where('school_id', $schoolId)),
+                    modifyQueryUsing: fn (Builder $query) => $query
+                        ->when(auth()->user()?->school_id, fn (Builder $branches, $schoolId) => $branches->where('school_id', $schoolId)),
                 )->searchable()->preload()->required()->visible(fn (): bool => ! auth()->user()?->branch_id),
             ]),
             FormSection::make('Personal Information')->columns(3)->schema([

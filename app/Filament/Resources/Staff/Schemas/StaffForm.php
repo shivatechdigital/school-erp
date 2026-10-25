@@ -9,14 +9,14 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 
 class StaffForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
@@ -73,13 +73,6 @@ class StaffForm
                 Section::make('Employment Details')
                     ->icon('heroicon-o-briefcase')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         TextInput::make('employee_code')
                             ->label('Employee ID')
                             ->unique(ignoreRecord: true)
@@ -101,7 +94,37 @@ class StaffForm
                                 'doctor' => 'Doctor',
                             ]))
                             ->required()
-                            ->default('teacher'),
+                            ->default('teacher')
+                            ->live(),
+
+                        Select::make('accessibleSchools')
+                            ->label('Accessible Schools')
+                            ->helperText('Which schools this School Admin can switch between from the top bar.')
+                            ->relationship('schools', 'name')
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (Get $get): bool => $get('user_type') === 'school_admin'
+                                && auth()->user()?->user_type === 'super_admin')
+                            ->columnSpanFull(),
+
+                        Select::make('accessibleBranches')
+                            ->label('Accessible Branches')
+                            ->helperText('Which branches this Branch Admin can switch between from the top bar.')
+                            ->relationship(
+                                'branches',
+                                'name',
+                                modifyQueryUsing: fn (Builder $query): Builder => $query
+                                    ->when(
+                                        auth()->user()?->user_type !== 'super_admin',
+                                        fn (Builder $branches): Builder => $branches->where('school_id', auth()->user()?->school_id),
+                                    ),
+                            )
+                            ->multiple()
+                            ->searchable()
+                            ->preload()
+                            ->visible(fn (Get $get): bool => $get('user_type') === 'branch_admin')
+                            ->columnSpanFull(),
 
                         Select::make('department_id')
                             ->label('Department')

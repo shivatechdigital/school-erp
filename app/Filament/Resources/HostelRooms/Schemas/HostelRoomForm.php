@@ -15,20 +15,11 @@ class HostelRoomForm
 {
     public static function configure(Schema $schema): Schema
     {
-        $isSuperAdmin = fn (): bool => auth()->user()?->user_type === 'super_admin';
-
         return $schema
             ->columns(1)
             ->components([
                 Section::make('Room Details')
                     ->schema([
-                        Select::make('school_id')
-                            ->relationship('school', 'name')
-                            ->searchable()
-                            ->preload()
-                            ->visible($isSuperAdmin)
-                            ->required($isSuperAdmin),
-
                         Select::make('hostel_id')
                             ->label('Hostel')
                             ->relationship('hostel', 'name', fn (Builder $query) => $query->where('is_active', true))
